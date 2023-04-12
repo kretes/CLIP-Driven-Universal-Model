@@ -129,6 +129,7 @@ def main():
     ## logging
     parser.add_argument('--log_name', default='Nvidia/old_fold0', help='The path resume from checkpoint')
     ## model load
+    parser.add_argument('--backbone', default='unet', help='backbone [swinunetr or unet or dints or unetpp]')
     parser.add_argument('--resume', default='./out/Nvidia/old_fold0/aepoch_500.pth', help='The path resume from checkpoint')
     parser.add_argument('--pretrain', default='./pretrained_weights/swin_unetr.base_5000ep_f48_lr2e-4_pretrained.pt', 
                         help='The path of pretrain model')
@@ -177,19 +178,25 @@ def main():
                     backbone=args.backbone,
                     encoding='word_embedding'
                     )
+
+    if args.pretrain:
+        model.load_params(torch.load(args.pretrain)["state_dict"])
+        print('Used weights from pretrained model')
     
     #Load pre-trained weights
-    store_dict = model.state_dict()
-    checkpoint = torch.load(args.resume)
-    load_dict = checkpoint['net']
-    # args.epoch = checkpoint['epoch']
 
-    for key, value in load_dict.items():
-        name = '.'.join(key.split('.')[1:])
-        store_dict[name] = value
+    if args.resume:
+        store_dict = model.state_dict()
+        checkpoint = torch.load(args.resume)
+        load_dict = checkpoint['net']
+        # args.epoch = checkpoint['epoch']
 
-    model.load_state_dict(store_dict)
-    print('Use pretrained weights')
+        for key, value in load_dict.items():
+            name = '.'.join(key.split('.')[1:])
+            store_dict[name] = value
+
+        model.load_state_dict(store_dict)
+        print('Used weights from resume checkpoint')
 
     model.cuda()
 
