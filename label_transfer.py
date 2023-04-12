@@ -48,8 +48,8 @@ from monai.config.type_definitions import NdarrayOrTensor
 
 from utils.utils import get_key
 
-ORGAN_DATASET_DIR = '/computenodes/node31/team1/jliu/data/ct_data/'
-ORGAN_LIST = 'dataset/dataset_list/PAOT.txt'
+ORGAN_DATASET_DIR = os.environ.get("CLIP_UM_ORGAN_DATASET_DIR", '/computenodes/node31/team1/jliu/data/ct_data/')
+ORGAN_LIST = os.environ.get("CLIP_UM_ORGAN_LIST", 'dataset/dataset_list/PAOT.txt')
 NUM_WORKER = 8
 NUM_CLASS = 32
 ## full list
